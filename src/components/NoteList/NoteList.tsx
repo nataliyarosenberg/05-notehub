@@ -15,12 +15,11 @@ export const NoteList = ({ notes }: NoteListProps) => {
   const deleteNoteMutation = useMutation({
     mutationFn: deleteNote,
     onSuccess: () => {
-      
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     deleteNoteMutation.mutate(id);
   };
 
@@ -28,8 +27,11 @@ export const NoteList = ({ notes }: NoteListProps) => {
     <ul className={css.list}>
       {notes.map((note) => (
         <li key={note.id} className={css.listItem}>
-          <h3 className={css.title}>{note.title}</h3>
-          <p className={css.content}>{note.content}</p>
+          <div className={css.footer}>
+            <h3 className={css.title}>{note.title}</h3>
+            <p className={css.content}>{note.content}</p>
+            <span className={css.tag}>{note.tag}</span>
+          </div>
           <button
             onClick={() => handleDelete(note.id)}
             className={css.button}

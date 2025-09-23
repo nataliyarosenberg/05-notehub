@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Formik, Field, Form, type FormikHelpers } from "formik";
+import { Formik, Field, Form, type FormikHelpers, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { createNote, type NewNoteData } from "../../services/noteService";
 import css from "./NoteForm.module.css";
-
 
 interface NoteFormProps {
     onSuccess: () => void;
@@ -45,19 +44,17 @@ export const NoteForm = ({ onSuccess, onCancel }: NoteFormProps) => {
 
 return (
   <Formik
-    initialValues={{ title: "", content: "", tag: "" }}
+    initialValues={{ title: "", content: "", tag: "Todo" }}
     validationSchema={noteSchema}
     onSubmit={handleSubmit}
   >
-    {({ errors, touched, isSubmitting }) => (
+    {({ isSubmitting }) => (
       <Form className={css.form}>
         <h2>Create New Note</h2>
         <div className={css.formGroup}>
           <label htmlFor="title">Title</label>
           <Field id="title" type="text" name="title" className={css.input} />
-          {errors.title && touched.title ? (
-            <span className={css.error}>{errors.title}</span>
-          ) : null}
+          <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -69,9 +66,7 @@ return (
             rows={8}
             className={css.textarea}
           />
-          {errors.content && touched.content ? (
-            <span className={css.error}>{errors.content}</span>
-          ) : null}
+          <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -84,9 +79,7 @@ return (
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          {errors.tag && touched.tag ? (
-            <span className={css.error}>{errors.tag}</span>
-          ) : null}
+          <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
         <div className={css.actions}>

@@ -1,26 +1,30 @@
 import axios from "axios";
-import type { Note } from "../types/note";
+import type { Note, NoteTag} from "../types/note";
 
 const API_KEY = import.meta.env.VITE_NOTEHUB_TOKEN;
 const BASE_URL = "https://notehub-public.goit.study/api";
 
 export interface FetchNotesResponse {
-  notes: any;
-  results: Note[];
-  total_pages: number;
-  total_results: number;
+ 
+  notes: Note[];
+  totalPages: number;
 }
 
 export interface NewNoteData {
   title: string;
   content: string;
-  tag: string;
+  tag: NoteTag;
 }
 
 export interface DeletedNoteResponse {
   message: string;
-  noteId: number;
+  noteId: string;
 }
+
+export interface CreateNoteResponse {
+  newNote: Note;
+}
+
 
 const getHeaders = () => ({
   headers: {
@@ -34,41 +38,43 @@ export const fetchNotes = async (
   page: number = 1,
   perPage: number = 12
 ): Promise<FetchNotesResponse> => {
-  const config = {
-    ...getHeaders(),
-    params: {
-      page: page,
-      perPage: perPage,
-      search: searchValue.trim() || undefined,
-    },
-  };
-
   const url = `${BASE_URL}/notes`;
 
+  const params: {
+    searchValue: string,
+      page: number,
+      perPage: number,
+      
+  } = {
+    page,
+    perPage,
+    searchValue: ""
+  };
+
   if (!searchValue.trim()) {
-    config.params.search = searchValue;
+    params.searchValue = searchValue.trim();
+  }
+  const config = {
+    ...getHeaders(),
+    params,
   }
 
-  const res = await axios.get<FetchNotesResponse>(
-    url,
-    config
-  );
+  const res = await axios.get<FetchNotesResponse>(url, config);
   console.log(res.data);
-  
-  return res.data;
+    return res.data;
   }
 
 export const createNote = async (noteData: NewNoteData): Promise<Note> => {
-  const res = await axios.post<Note>(
+  const res = await axios.post<CreateNoteResponse>(
     `${BASE_URL}/notes`,
     noteData,
     getHeaders()
   );
-  return res.data;
+  return res.data.newNote;
 };
 
 export const deleteNote = async (
-  noteId: number
+  noteId: string
 ): Promise<DeletedNoteResponse> => {
   const res = await axios.delete<DeletedNoteResponse>(
     `${BASE_URL}/notes/${noteId}`,

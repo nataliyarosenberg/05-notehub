@@ -24,8 +24,8 @@ export default function App() {
     placeholderData: keepPreviousData,
   });
 
-  const notes = data?.results || [];
-  const totalPages = data?.total_pages || 0;
+  const notes = data?.notes || [];
+  const totalPages = data?.totalPages || 0;
 
   useEffect(() => {
     if (isSuccess && notes.length === 0 && searchValue) {
@@ -48,7 +48,7 @@ export default function App() {
 
   return (
     <div className={css.app}>
-      <div className={css.toolbar}>
+      <header className={css.toolbar}>
         <SearchBox onSubmit={debouncedHandleSearch} />
         {totalPages > 1 && (
           <Pagination
@@ -61,14 +61,14 @@ export default function App() {
         <button className={css.button} onClick={handleToggleModal}>
           Create note +
         </button>
-      </div>
+      </header>
 
       {(isLoading || isFetching) && <Loader />}
       {isError && error && (
         <ErrorMessage message={error?.message || "An error occurred."} />
       )}
       {!isFetching && notes.length > 0 ? (
-        <NoteList notes={notes} />
+        <NoteList notes={data!.notes} />
       ) : (
         !isFetching &&
         !isError &&
