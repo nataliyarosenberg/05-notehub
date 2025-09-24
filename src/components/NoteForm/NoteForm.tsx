@@ -66,7 +66,7 @@ return (
             rows={8}
             className={css.textarea}
           />
-          <ErrorMessage name="title" component="span" className={css.error} />
+          <ErrorMessage name="content" component="span" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -79,7 +79,7 @@ return (
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <ErrorMessage name="title" component="span" className={css.error} />
+          <ErrorMessage name="tag" component="span" className={css.error} />
         </div>
 
         <div className={css.actions}>

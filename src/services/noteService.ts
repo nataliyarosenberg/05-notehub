@@ -9,6 +9,11 @@ export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
+export interface FetchNotesParams {
+  search?: string;
+  page?: number;
+  perPage?: number;
+}
 
 export interface NewNoteData {
   title: string;
@@ -17,8 +22,7 @@ export interface NewNoteData {
 }
 
 export interface DeletedNoteResponse {
-  message: string;
-  noteId: string;
+  deletedNote: Note;
 }
 
 export interface CreateNoteResponse {
@@ -34,51 +38,33 @@ const getHeaders = () => ({
 
 //function HTTP-query for notes
 export const fetchNotes = async (
-  searchValue: string,
-  page: number = 1,
-  perPage: number = 12
+  params: FetchNotesParams
 ): Promise<FetchNotesResponse> => {
   const url = `${BASE_URL}/notes`;
 
-  const params: {
-    searchValue: string,
-      page: number,
-      perPage: number,
-      
-  } = {
-    page,
-    perPage,
-    searchValue: ""
+  if (params.search && typeof params.search === 'string') {
+    params.search = params.search.trim();
+  }
+
+    const { data } = await axios.get<FetchNotesResponse>(url, { params: params });
+    return data;
   };
 
-  if (!searchValue.trim()) {
-    params.searchValue = searchValue.trim();
-  }
-  const config = {
-    ...getHeaders(),
-    params,
-  }
-
-  const res = await axios.get<FetchNotesResponse>(url, config);
-  console.log(res.data);
-    return res.data;
-  }
-
 export const createNote = async (noteData: NewNoteData): Promise<Note> => {
-  const res = await axios.post<CreateNoteResponse>(
+  const {data} = await axios.post<CreateNoteResponse>(
     `${BASE_URL}/notes`,
     noteData,
     getHeaders()
   );
-  return res.data.newNote;
+  return data.newNote;
 };
 
 export const deleteNote = async (
   noteId: string
-): Promise<DeletedNoteResponse> => {
-  const res = await axios.delete<DeletedNoteResponse>(
+): Promise<Note> => {
+  const {data} = await axios.delete<DeletedNoteResponse>(
     `${BASE_URL}/notes/${noteId}`,
     getHeaders()
   );
-  return res.data;
+  return data.deletedNote;
 };
